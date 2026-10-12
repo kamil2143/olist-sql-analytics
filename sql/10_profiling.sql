@@ -23,4 +23,23 @@ WHERE rn=2;
 -- 2. Statusy zamówień i ich udział w całości --
 -- =======================================================================
 
+SELECT order_status, COUNT(*) AS ilosc_zamowien, ROUND((COUNT(*)*100.0/SUM(COUNT(*)) OVER()),2) AS wskaznik_procentowy
+FROM orders
+GROUP BY order_status
+ORDER BY ilosc_zamowien DESC;
 
+-- =======================================================================
+-- 3. Zakres dat i liczba zamówień na miesiąc
+-- =======================================================================
+
+-- 3.1 Sprawdzenie skrajnych miesięcy, czy dane pokrywają każdy dzień, czy tylko część(Pierwszy zaczyna się od 4 dnia, ostatni kończy na 17 dniu)
+SELECT
+	MIN(order_purchase_timestamp::TIMESTAMP) AS data_pierwszej_transakcji,
+	MAX(order_purchase_timestamp::TIMESTAMP) AS data_ostatniej_transakcji
+FROM orders;
+
+-- 3.2 Liczba zamówień w poszczególnych miesiącach
+SELECT DATE_TRUNC('month', order_purchase_timestamp::TIMESTAMP) AS miesiac, COUNT(*) AS liczba_zamowien
+FROM orders
+GROUP BY miesiac
+ORDER BY miesiac;
