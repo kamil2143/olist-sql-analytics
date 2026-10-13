@@ -1,1 +1,3 @@
 # olist-sql-analytics
+Projekt analizy danych e-commerce na bazie zbioru Olist (~100 tys. zamówień w latach 2016-2018), realizowany w SQL(PostgreSQL).
+Status: W trakcie realizacji...
