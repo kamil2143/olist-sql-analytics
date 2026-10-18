@@ -60,3 +60,28 @@ WHERE oe.order_status IN ('delivered','shipped')
 GROUP BY c.customer_state
 ORDER BY przychod DESC;
 
+-- =========================================================================
+-- 4. Rozkład sprzedaży w ujęciu godzinowym i dniowym
+-- =========================================================================
+
+SELECT
+	EXTRACT('hour' FROM data_zakupu) AS godzina_zakupu,
+	COUNT(order_id) AS liczba_zamowien,
+	SUM(calkowity_przychod) AS przychod,
+	ROUND(AVG(calkowity_przychod),2) AS srednia_koszyka,
+	ROUND(COUNT(order_id) * 100.00 / SUM(COUNT(order_id)) OVER(),2) AS procent_wszystkich_zamowien
+FROM analytics.orders_enriched
+WHERE order_status IN ('delivered','shipped')
+GROUP BY godzina_zakupu;
+
+SELECT
+	EXTRACT(isodow FROM data_zakupu) AS dzien_zakupu,
+	COUNT(order_id) AS liczba_zamowien,
+	SUM(calkowity_przychod) AS przychod,
+	ROUND(AVG(calkowity_przychod),2) AS srednia_koszyka,
+	ROUND(COUNT(order_id) * 100.00 / SUM(COUNT(order_id)) OVER(),2) AS procent_wszystkich_zamowien
+FROM analytics.orders_enriched
+WHERE order_status IN ('delivered','shipped')
+GROUP BY dzien_zakupu
+ORDER BY dzien_zakupu;
+
