@@ -46,7 +46,8 @@ SELECT
 	p.cena_przedmiotow,
 	p.cena_wysylki,
 	p.calkowity_przychod,
-	wr.wystawiona_ocena
+	wr.wystawiona_ocena,
+	(d.data_dostarczenia - d.szacowana_data_dostarczenia) AS dni_spoznienia
 FROM wyczyszczone_daty d
 LEFT JOIN przychody p
 	ON d.order_id = p.order_id

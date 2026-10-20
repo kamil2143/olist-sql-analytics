@@ -14,6 +14,7 @@
 - data_zakupu - data i godzina złożenia zamówienia oczyszczona z pustych znaków i ze zmienionym typem na `TIMESTAMP`.
 - czas_dostawy - liczba pełnych dni kalendarzowych od zakupu do doręczenia paczki (`data_dostarczenia - data_zakupu`)
 - czy_spoznione - boolean określający, czy zamówienie dotarło po wyznaczonym szacowanym terminie dostawy (`TRUE` - dzien dostarczenia > szacowana data dostarczenia, `FALSE` gdy dotarło na czas)
+- dni_spoznienia - różnica dni między datą dostarczenia a pierwotnie szacowanym terminem (`data_dostarczenia - szacowana_data_dostarczenia`). Jeśli występuje wartość dodatnia, to oznacza opóźnienie, jeśli ujemna - brak opóźnień/dotarcie przesyłki przed czasem.
 
 **UWAGA:** Dla zamówień, które nie mają wprowadzonej daty dostarczenia, kolumny `czas_dostawy` oraz `czy_spoznione` przyjmują wartość NULL. Daty zostały porównane jako pełne dni, ponieważ szacowana data ma zawsze wpisaną godzinę `00:00:00`.
 
