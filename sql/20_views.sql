@@ -1,3 +1,10 @@
+-- =============================================================================
+-- 20_views.sql: warstwa analityczna analytics.orders_enriched
+-- Cel: czysty i praktyczny widok na poziomie zamowienia, do pracy na plikach 30_-50_
+-- 1 wiersz = 1 order_id (99 441 wierszy)
+-- Definicje metryk znajduja sie w docs/metrics.md
+-- =============================================================================
+
 CREATE SCHEMA IF NOT EXISTS analytics;
 
 CREATE OR REPLACE VIEW analytics.orders_enriched AS

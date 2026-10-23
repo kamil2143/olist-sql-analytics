@@ -1,4 +1,12 @@
 -- ===========================================================================
+-- 50_customers.sql: klienci i ich powroty oraz rozklad wedlug stanow
+-- Pytanie: czy klienci wracaja i gdzie sa?
+-- Zapytania korzystaja glownie z analytics.orders_enriched
+-- Brane sa pod uwage zamowienia ze statusem 'delivered'
+-- ===========================================================================
+
+
+-- ===========================================================================
 -- 1. Odsetek klientów, którzy kupili więcej niż raz
 -- ===========================================================================
 

@@ -1,3 +1,10 @@
+-- =============================================================================
+-- 40_delivery.sql: dostawy, opoznienia i oceny
+-- Pytanie: ile dostaw jest spoznionych, gdzie i kiedy, wplyw opoznien na oceny
+-- Zapytania korzystaja glownie z analytics.orders_enriched
+-- =============================================================================
+
+
 -- ===========================================================================
 -- 1. Sprawdzenie procentu spóźnionych dostaw zamówień z podziałem miesięcznym
 -- ===========================================================================

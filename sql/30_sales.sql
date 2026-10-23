@@ -1,4 +1,12 @@
 -- =========================================================================
+-- 30_sales.sql: sprzedaz w czasie, kategorie i stany
+-- Pytanie: jak zmienia sie sprzedaz i skad pochodzi przychod?
+-- Zapytania korzystaja glownie z analytics.orders_enriched
+-- Brane pod uwage sa zamowienia ze statusem `delivered` lub `shipped`
+-- =========================================================================
+
+
+-- =========================================================================
 -- 1. Miesięczny trend sprzedaży i dynamika
 -- =========================================================================
 
@@ -64,6 +72,7 @@ ORDER BY przychod DESC;
 -- 4. Rozkład sprzedaży w ujęciu godzinowym i dniowym
 -- =========================================================================
 
+-- 4.1 Rozklad w ujeciu godzinowym
 SELECT
 	EXTRACT('hour' FROM data_zakupu) AS godzina_zakupu,
 	COUNT(order_id) AS liczba_zamowien,
@@ -72,8 +81,10 @@ SELECT
 	ROUND(COUNT(order_id) * 100.00 / SUM(COUNT(order_id)) OVER(),2) AS procent_wszystkich_zamowien
 FROM analytics.orders_enriched
 WHERE order_status IN ('delivered','shipped')
-GROUP BY godzina_zakupu;
+GROUP BY godzina_zakupu
+ORDER BY godzina_zakupu;
 
+-- 4.2 Rozklad w ujeciu dniowym
 SELECT
 	EXTRACT(isodow FROM data_zakupu) AS dzien_zakupu,
 	COUNT(order_id) AS liczba_zamowien,
@@ -84,4 +95,3 @@ FROM analytics.orders_enriched
 WHERE order_status IN ('delivered','shipped')
 GROUP BY dzien_zakupu
 ORDER BY dzien_zakupu;
-
