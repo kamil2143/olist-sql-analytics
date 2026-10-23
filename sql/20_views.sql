@@ -28,6 +28,8 @@ SELECT
 	order_status,
 	NULLIF(TRIM(order_purchase_timestamp),'')::TIMESTAMP AS data_zakupu,
 	NULLIF(TRIM(order_delivered_customer_date),'')::DATE AS data_dostarczenia,
+	NULLIF(TRIM(order_delivered_carrier_date),'')::DATE AS data_otrzymania_przez_kuriera,
+	NULLIF(TRIM(order_approved_at),'')::DATE AS data_potwierdzenia_zakupu,
 	NULLIF(TRIM(order_estimated_delivery_date),'')::DATE AS szacowana_data_dostarczenia
 FROM orders
 )
@@ -47,7 +49,10 @@ SELECT
 	p.cena_wysylki,
 	p.calkowity_przychod,
 	wr.wystawiona_ocena,
-	(d.data_dostarczenia - d.szacowana_data_dostarczenia) AS dni_spoznienia
+	(d.data_dostarczenia - d.szacowana_data_dostarczenia) AS dni_spoznienia,
+	d.data_otrzymania_przez_kuriera,
+	d.data_potwierdzenia_zakupu,
+	d.data_dostarczenia
 FROM wyczyszczone_daty d
 LEFT JOIN przychody p
 	ON d.order_id = p.order_id

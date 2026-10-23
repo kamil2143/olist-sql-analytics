@@ -81,3 +81,60 @@ WHERE dni_spoznienia IS NOT NULL
 	AND order_status = 'delivered'
 GROUP BY przedzial_spoznienia
 ORDER BY MIN(dni_spoznienia);
+
+-- =========================================================================
+-- 6. Analiza opóźnień w podziale na etapy realizacji dostawy
+-- =========================================================================
+
+-- 6.1 Sprawdzenie liczby zamówień, w których daty są niespójne (694 przypadków)
+WITH czasy_realizacji AS(
+SELECT
+	order_id,
+	(data_potwierdzenia_zakupu - data_zakupu::DATE) AS czas_realizacji_zakup_sklep,
+	(data_otrzymania_przez_kuriera - data_potwierdzenia_zakupu) AS czas_realizacji_sklep_kurier,
+	(data_dostarczenia - data_otrzymania_przez_kuriera) AS czas_realizacji_kurier_klient,
+	czas_dostawy,
+	czy_spoznione
+FROM analytics.orders_enriched
+WHERE order_status = 'delivered' AND
+	czy_spoznione IS NOT NULL AND
+	data_otrzymania_przez_kuriera IS NOT NULL AND
+	data_potwierdzenia_zakupu IS NOT NULL
+)SELECT
+	COUNT(*) AS wszystkie,
+	COUNT(*) FILTER(
+		WHERE czas_realizacji_zakup_sklep < 0
+			OR czas_realizacji_sklep_kurier < 0
+			OR czas_realizacji_kurier_klient < 0
+			) AS z_ujemnym_etapem
+FROM czasy_realizacji;
+
+-- 6.2 Średni czas etapu realizacji dostawy przesyłki
+WITH czasy_realizacji AS(
+SELECT
+	order_id,
+	(data_potwierdzenia_zakupu - data_zakupu::DATE) AS czas_realizacji_zakup_sklep,
+	(data_otrzymania_przez_kuriera - data_potwierdzenia_zakupu) AS czas_realizacji_sklep_kurier,
+	(data_dostarczenia - data_otrzymania_przez_kuriera) AS czas_realizacji_kurier_klient,
+	czas_dostawy,
+	czy_spoznione
+FROM analytics.orders_enriched
+WHERE order_status = 'delivered' AND
+	czy_spoznione IS NOT NULL AND
+	data_otrzymania_przez_kuriera IS NOT NULL AND
+	data_potwierdzenia_zakupu IS NOT NULL
+)SELECT
+	CASE
+		WHEN czy_spoznione = TRUE THEN 'Spoznione'
+		ELSE 'Niespoznione'
+	END AS status_dostawy,
+	ROUND(AVG(czas_realizacji_zakup_sklep),2) AS sredni_czas_zakup_sklep,
+	ROUND(AVG(czas_realizacji_sklep_kurier),2) AS sredni_czas__sklep_kurier,
+	ROUND(AVG(czas_realizacji_kurier_klient),2) AS sredni_czas_kurier_klient,
+	COUNT(*) AS ilosc_zamowien
+FROM czasy_realizacji
+WHERE czas_realizacji_zakup_sklep >= 0
+	AND czas_realizacji_sklep_kurier >= 0
+	AND czas_realizacji_kurier_klient >= 0
+GROUP BY czy_spoznione
+ORDER BY status_dostawy;
