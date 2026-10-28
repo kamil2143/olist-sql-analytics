@@ -68,3 +68,59 @@ WHERE oe.order_status = 'delivered'
 GROUP BY c.customer_state
 ORDER BY liczba_klientow DESC;
 
+-- ===========================================================================
+-- 4. Czy spoznienia mają wpływ na odsetek klientów powracających
+-- ===========================================================================
+
+-- 4.1 Odsetek powracających klientów (Wszystkie zamówienia)
+WITH klienci AS(
+SELECT 
+	c.customer_unique_id,
+	oe.order_id,
+	oe.data_zakupu,
+	ROW_NUMBER() OVER(PARTITION BY customer_unique_id ORDER BY data_zakupu) AS rn,
+	oe.czy_spoznione,
+	COUNT(oe.order_id) OVER(PARTITION BY c.customer_unique_id) AS liczba_zamowien
+FROM analytics.orders_enriched AS oe
+LEFT JOIN customers AS c
+ON oe.customer_id = c.customer_id
+WHERE order_status = 'delivered'
+AND oe.czy_spoznione IS NOT NULL
+)
+SELECT
+	CASE
+		WHEN czy_spoznione THEN 'Spoznione'
+		ELSE 'Na czas'
+	END AS status_pierwszej_dostawy,
+	COUNT(customer_unique_id) AS liczba_klientow,
+	ROUND(COUNT(*) FILTER (WHERE liczba_zamowien >=2)*100.00 / COUNT(*),2) AS odsetek_powracajacych
+FROM klienci
+WHERE rn = 1
+GROUP BY czy_spoznione;
+
+-- 4.2 Odsetek powracających klientów (Zamówienia tylko sprzed 2018 roku)
+WITH klienci AS(
+SELECT 
+	c.customer_unique_id,
+	oe.order_id,
+	oe.data_zakupu,
+	ROW_NUMBER() OVER(PARTITION BY customer_unique_id ORDER BY data_zakupu) AS rn,
+	oe.czy_spoznione,
+	COUNT(oe.order_id) OVER(PARTITION BY c.customer_unique_id) AS liczba_zamowien
+FROM analytics.orders_enriched AS oe
+LEFT JOIN customers AS c
+ON oe.customer_id = c.customer_id
+WHERE order_status = 'delivered'
+AND oe.czy_spoznione IS NOT NULL
+)
+SELECT
+	CASE
+		WHEN czy_spoznione THEN 'Spoznione'
+		ELSE 'Na czas'
+	END AS status_pierwszej_dostawy,
+	COUNT(customer_unique_id) AS liczba_klientow,
+	ROUND(COUNT(*) FILTER (WHERE liczba_zamowien >=2)*100.00 / COUNT(*),2) AS odsetek_powracajacych
+FROM klienci
+WHERE rn = 1
+	AND data_zakupu < '2018-01-01'
+GROUP BY czy_spoznione;
