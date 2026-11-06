@@ -32,7 +32,7 @@ ORDER BY miesiac;
 
 WITH przychody_kategorii AS(
 SELECT 
-	SUM(oi.price+oi.freight_value) AS przychod,
+	SUM(oi.price+oi.freight_value)::NUMERIC AS przychod,
 	COALESCE(NULLIF(TRIM(pt.product_category_name_english),''),'unknown') AS nazwa_kategorii
 FROM order_items AS oi
 LEFT JOIN orders AS o

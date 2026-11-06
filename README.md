@@ -9,7 +9,7 @@ Analiza ok. 100 tys. zamówień brazylijskiego marketplace'u Olist (2016-2018), 
 ## Najważniejsze ustalenia
 ### Sprzedaż
 1. Sprzedaż silnie rosła, z wyraźnym szczytem w okresie świątecznym i na przełomie roku 2017 oraz 2018. Całkowity przychód wzrósł ze 130 446 R$ (sty 2017) do nawet 1 161 986 R$ (lis 2017). Prawdopodobnie było to związane z Black Friday. W 2018 roku wzrost ten jednak wyhamował: miesięcznie składano 6,1-7,1 tys. zamówień (ok. 1,0-1,15 mln R$ przychodu) bez wyraźnego trendu.
-2. Zakupy rozkładają się równo między godz. 10 a 23, natomiast między 2 a 6 rano jest bardzo mało zamówień. W godzinach 10-23 składane jest 81,5% zamówień. Nie ma wyraźnego szczytu, więc nie da się wyznaczyć "złotej godziny". Klienci kupują wyraźnie rzadziej w weekendy. Średnio jeden dzień roboczy generuje ok. 15,4% wszystkich zamówień, natomiast jeden dzień weekendu ok. 11,5%.
+2. Zakupy rozkładają się równo między godz. 10:00 a 22:59, natomiast między 2 a 6 rano jest bardzo mało zamówień. W godzinach 10-23 składane jest 81,5% zamówień. Nie ma wyraźnego szczytu, więc nie da się wyznaczyć "złotej godziny". Klienci kupują wyraźnie rzadziej w weekendy. Średnio jeden dzień roboczy generuje ok. 15,4% wszystkich zamówień, natomiast jeden dzień weekendu ok. 11,5%.
 3. Przychód jest silnie skoncentrowany: 18 spośród 72 kategorii daje ok. 80% całkowitego przychodu, natomiast 5 stanów z 27 ok. 73%. Największe kategorie to health_beauty (9,2% całkowitego przychodu), watches_gifts (8,3%) i bed_bath_table (7,9%). Największe stany to SP,RJ,MG.
 
 ### Dostawy i oceny
@@ -17,7 +17,7 @@ Analiza ok. 100 tys. zamówień brazylijskiego marketplace'u Olist (2016-2018), 
 5. Opóźnienia powstają głównie w trakcie transportu do klienta, a nie u sprzedawcy. Spóźnione zamówienia idą od zakupu do dostawy średnio ok. 33,9 dnia wobec 11,0 dnia dla dostaw na czas (różnica 22,9 dnia). Aż 87% tej różnicy to etap od odbioru paczki przez kuriera do dostarczenia jej klientowi, 13% to etap sprzedawca -> kurier. Największy odsetek spóźnień mają stany: AL (21,4%), MA (17,4%), SE (15,2%), PI (13,9%). Spóźnienia też są skupione w czasie: najwięcej - listopad 2017 (12,4%) oraz luty 2018 (14,1%) i marzec 2018 (19,0%).
 
 ### Klienci
-6. Bardzo niewielu klientów wraca, a po spóźnionej dostawie jeszcze mniej. Tylko 3,0% klientów złożyło więcej niż jedno zamówienie. Średni czas między zamówieniami wynosi 79,1 dnia, zaś mediana to 29 dni. Klienci, których pierwsze zamówienie przyszło spóźnione, wracają rzadziej: 2,5% wobec 3,0%. Powtórzyłem porównanie dla klientów z pierwszym zamówieniem przed 2018 rokiem, aby każdy miał podobnie dużo czasu na powrót. Wyniki to 4,3% powracających w przypadku dostawy na czas i 2,8% dla spóźnionej dostawy (n = 2389/40004).
+6. Bardzo niewielu klientów wraca, a po spóźnionej dostawie jeszcze mniej. Tylko 3,0% klientów złożyło więcej niż jedno zamówienie. Średni czas między zamówieniami wynosi 79,1 dnia, zaś mediana to 29 dni. Klienci, których pierwsze zamówienie przyszło spóźnione, wracają rzadziej: 2,5% wobec 3,0%. Powtórzyłem porównanie dla klientów z pierwszym zamówieniem przed 2018 rokiem, aby każdy miał podobnie dużo czasu na powrót. Wyniki to 4,25% powracających w przypadku dostawy na czas i 2,8% dla spóźnionej dostawy (n = 2389/40004).
 
 ## Wnioski i rekomendacje
 
@@ -43,7 +43,7 @@ Przed analizą sprawdziłem klucze, duplikaty, braki i spójności dat.
 |---|---|---|---|
 | Zduplikowane `review_id` i zamówienia z kilkoma recenzjami | 827 powtórzonych `review_id`, 555 zamówień z 2+ recenzjami | Dla każdego zamówienia zostawiam najnowszą recenzję, żeby jedno zamówienie było liczone tylko raz | `10_profiling.sql` 1-2., 5.; `20_views.sql` |
 | Produkty bez kategorii | 610 | W analizie kategorii trafiają do `unknown` (razem z kategoriami bez tłumaczenia) | `10_profiling.sql` 6; `30_sales.sql` 2. |
-| Dostarczone zamówienia z brakiem którejś z dat | 23 | Pomijane w metrykach czasu dostawy | `10_profiling.sql` 4. |
+| Dostarczone zamówienia z brakiem którejś z dat | 23 | 8 z `NULL` w metrykach dostawy, 15 wypada tylko z analizy etapów | `10_profiling.sql` 4. |
 | Niespójne daty etapów (np. dostawa przed odbiorem przez kuriera) | 694 | Wyłączone ze średnich czasów etapów, bo nie wiadomo, która data jest błędna | `40_delivery.sql` 6. |
 | Pierwszy i ostatni miesiąc danych pokryte tylko częściowo, mało zamówień w 2016 | kilka zamówień na miesiąc | Trend sprzedaży ograniczony do 2017-01 … 2018-08 | `10_profiling.sql` 3.; `30_sales.sql` 1. |
 
@@ -53,7 +53,7 @@ Przed analizą sprawdziłem klucze, duplikaty, braki i spójności dat.
 
 **Ograniczenia**
 - Brak danych o przewoźniku, więc o etapie transportu informacje są dość ogólne.
-- Skrajne miesiące mają mało zamówień, więc zostały pominięte w zestawieniach miesięcznych.
+- Skrajne miesiące mają mało zamówień, więc zostały pominięte w analizie trendu sprzedaży miesięcznej.
 - Powroty klientów są obliczone dla pierwszych zamówień przed 2018 rokiem, żeby każdy miał podobnie dużo czasu na powrót.
 
 ## Struktura repozytorium
